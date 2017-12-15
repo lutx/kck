@@ -6,13 +6,13 @@ import shop.actions.ProductItemController;
  * Created by lukas on 08.10.2017.
  */
 public class MainMenu implements Action {
+
     @Override
     public void showPrompt() {
         String prompt = "1. Product List\n" +
                 "2. Manufacturer List\n" +
                 "3. Account Details\n" +
-                "4. Shopping App\n" +
-                "5. Exit";
+                "4. Exit";
 
         System.out.println(prompt);
     }
@@ -26,12 +26,6 @@ public class MainMenu implements Action {
             case 3:
                 return new AccountDetails();
             case 4:
-              //  return (Action) new ProductItemController(new ProductItemGUI(),new ProductDB(),new CartItem());
-             return (Action) new Shopping();
-              //  return (Action) new ProductItemGUI();
-
-
-            case 5:
                 System.out.println("Bye bye!");
                 System.exit(0);
 

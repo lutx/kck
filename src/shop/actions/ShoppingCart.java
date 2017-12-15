@@ -9,20 +9,36 @@ import javax.swing.table.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 import shop.db.Model;
-public class ShoppingCart {
+public class ShoppingCart implements CustomApp {
 
+    private ProductItemGUI productItemGUI;
+    State state;
 
-
-    public static void main(String[] args) {
-
+    @Override
+    public void runApp() {
         JFrame.setDefaultLookAndFeelDecorated(true);
 
         ProductDB productDB = new ProductDB();
-        ProductItemGUI productItemGUI = new ProductItemGUI();
+        productItemGUI = new ProductItemGUI(this);
         CartItem cart = new CartItem();
-        ProductItemController  productItemController = new ProductItemController(productItemGUI,productDB,cart);
+        ProductItemController  productItemController = new ProductItemController(this, productItemGUI,productDB,cart);
         productItemGUI.setVisible(true);
     }
+    @Override
+    public void stopApp() {
+        productItemGUI.close();
+    }
+
+    @Override
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    @Override
+    public void changeApp(CustomApp app) {
+        this.state.changeState(app);
+    }
+
 
 }
 
@@ -36,8 +52,10 @@ class ProductItemGUI extends JFrame {
     private JTable table;
     private DefaultTableModel defaultModel;
     private JPanel panel,panel2;
+    private CustomApp parent;
 
-    public ProductItemGUI() {
+    public ProductItemGUI(CustomApp parent) {
+        this.parent = parent;
         this.setTitle("Best Shop");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBounds(100,100,600,380);
@@ -315,8 +333,10 @@ class ProductItemController {
     private ProductItemGUI productItemGUI;
     private ProductDB productDB;
     private CartItem cart;
+    CustomApp parent;
 
-    public ProductItemController(ProductItemGUI productItemGUI,ProductDB productDB,CartItem cart) {
+    public ProductItemController(CustomApp parent, ProductItemGUI productItemGUI,ProductDB productDB,CartItem cart) {
+        this.parent = parent;
         this.productItemGUI = productItemGUI;
         this.productDB = productDB;
         this.cart = cart;
@@ -342,7 +362,7 @@ class ProductItemController {
                 productItemGUI.setPrice("");
             }else{
                 CheckoutGUI checkoutGUI = new CheckoutGUI();
-                CheckoutController checkoutController = new CheckoutController(checkoutGUI,productDB,cart);
+                CheckoutController checkoutController = new CheckoutController(parent, checkoutGUI,productDB,cart);
                 productItemGUI.close();
                 checkoutGUI.setVisible(true);
             }
@@ -451,10 +471,7 @@ class ProductItemController {
 
     class ConsoleListener implements ActionListener{
         public void actionPerformed(ActionEvent e){
-            new Menu();
-            productItemGUI.close();
-
-
+            parent.changeApp(new ConsoleApp());
             //new MainMenu();
 
             //JOptionPane.showMessageDialog(null, "Console shopping!!!", "Msg", JOptionPane.INFORMATION_MESSAGE );
@@ -467,8 +484,10 @@ class CheckoutController {
     private CheckoutGUI checkoutGUI;
     private CartItem cart;
     private ProductDB productDB;
+    CustomApp parent;
 
-    public CheckoutController(CheckoutGUI checkoutGUI,ProductDB productDB,CartItem cart){
+    public CheckoutController(CustomApp parent, CheckoutGUI checkoutGUI,ProductDB productDB,CartItem cart){
+        this.parent = parent;
         this.checkoutGUI = checkoutGUI;
         this.productDB = productDB;
         this.cart = cart;
@@ -487,8 +506,8 @@ class CheckoutController {
 
     class ShopListener implements ActionListener{
         public void actionPerformed(ActionEvent e){
-            ProductItemGUI productItemGUI = new ProductItemGUI();
-            ProductItemController  productItemController = new ProductItemController(productItemGUI,productDB,new CartItem());
+            ProductItemGUI productItemGUI = new ProductItemGUI(parent);
+            ProductItemController  productItemController = new ProductItemController(parent, productItemGUI,productDB,new CartItem());
             checkoutGUI.close();
             productItemGUI.setVisible(true);
         }

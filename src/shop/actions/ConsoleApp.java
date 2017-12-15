@@ -1,19 +1,13 @@
-package shop;
+package shop.actions;
 
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
+public class ConsoleApp implements CustomApp {
 
-
-        import shop.actions.Action;
-        import shop.actions.MainMenu;
-
-        import java.util.InputMismatchException;
-        import java.util.Scanner;
-
-public class Main {
-
-    public static void main(String[] args) {
-        showWelcomeMessage();
-
+    State state;
+    @Override
+    public void runApp() {
         Scanner scanner = new Scanner(System.in);
         Action currentAction = new MainMenu();
         while (true) {
@@ -31,11 +25,18 @@ public class Main {
         }
     }
 
-    private static void showWelcomeMessage() {
-        String message = "\n\n Best shop in console...\n\n\n";
+    @Override
+    public void stopApp() {
+        return;
+    }
 
-        System.out.println(message);
+    @Override
+    public void setState(State state) {
+        this.state = state;
+    }
 
+    @Override
+    public void changeApp(CustomApp app) {
+        this.state.changeState(app);
     }
 }
-
